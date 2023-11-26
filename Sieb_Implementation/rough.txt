@@ -1,0 +1,62 @@
+InitializeSieveArray
+    LDR R2, =sieveArray ; R2 points to the start of sieveArray
+    MOV R3, ARRAY_SIZE   ; Set the loop counter to the size of the array
+    MOV R4, #2          ; Initial value to set in the array
+
+init_loop
+    STR R4, [R2], #4    ; Set the current element in sieveArray and move to the next
+    ADD R4, R4, #1      ; Increment the value for the next iteration
+    SUBS R3, R3, #1     ; Decrement the loop counter
+    BNE init_loop       ; Repeat until the loop counter is zero
+    BX LR               ; Return
+Purpose: This loop initializes the sieveArray with consecutive integers starting from 2, marking them as potential primes.
+
+Explanation:
+
+R2 is set to point to the start of sieveArray.
+R3 is set to the size of the array (ARRAY_SIZE).
+R4 is initialized to 2, the first prime number.
+The loop (init_loop) stores the current value of R4 into sieveArray, increments R4, decrements R3, and repeats until R3 becomes zero.
+Sieve Algorithm Loop (SieveAlgorithm):
+
+assembly
+Copy code
+SieveAlgorithm
+    LDR R2, =sieveArray ; R2 points to the start of sieveArray
+    MOV R3, ARRAY_SIZE   ; Set the outer loop counter to the size of the array
+    MOV R4, R2          ; R4 is used as the outer loop index
+
+outer_loop
+    LDR R0, [R4]        ; Load the value at the current index in sieveArray
+
+    ; Skip if the current number is marked as non-prime
+    CMP R0, #0
+    BEQ skip_outer_iteration
+
+    ; Inner loop to mark multiples of the current prime as non-prime
+    MOV R5, R2          ; R5 is used as the inner loop index
+
+inner_loop
+    ADD R5, R5, R0      ; Calculate the address of the multiple in sieveArray
+    STR R1, [R5], #4    ; Mark the multiple as non-prime
+    ADD R5, R5, R0      ; Move to the next multiple
+    CMP R5, #ARRAY_SIZE ; Check if we've reached the end of sieveArray
+    BLO inner_loop      ; Repeat the inner loop if R5 is less than ARRAY_SIZE
+
+skip_outer_iteration
+    ADD R4, R4, #4      ; Move to the next element in sieveArray
+    SUBS R3, R3, #1     ; Decrement the outer loop counter
+    BNE outer_loop      ; Repeat the outer loop until the loop counter is zero
+    BX LR               ; Return
+Purpose: This loop performs the Sieve algorithm to mark multiples of primes as non-prime in sieveArray.
+
+Explanation:
+
+R2 is set to point to the start of sieveArray.
+R3 is set to the size of the array (ARRAY_SIZE).
+R4 is initialized to the start of sieveArray (outer loop index).
+The outer loop (outer_loop) iterates through each element in sieveArray.
+If the current element (R0) is not marked as non-prime (not equal to 0), the inner loop (inner_loop) is executed to mark multiples of the current prime as non-prime.
+The inner loop calculates the address of the multiple, marks it as non-prime, and repeats until the end of sieveArray.
+After processing an outer loop iteration, R4 is moved to the next element in sieveArray, and the outer loop counter R3 is decremented.
+The loops continue until the outer loop counter (R3) becomes zero, indicating completion.

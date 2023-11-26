@@ -1,0 +1,40 @@
+Initialization:
+
+Set the number to be checked (r0) to 29.
+Set the divisor (r1) to 2.
+First Iteration:
+
+Compare the divisor (2) with the number (29).
+Since 2 < 29, enter the loop.
+Divide 29 by 2 (sdiv r2, r2, r1). The quotient is 14, and the remainder is 1.
+Multiply the quotient (14) by the divisor (2). The result is 28.
+Compare the result (28) with the original number (29). They are not equal, so continue to the next iteration.
+Second Iteration:
+
+Increment the divisor to 3.
+Compare the divisor (3) with the number (29).
+Since 3 < 29, enter the loop.
+Divide 29 by 3 (sdiv r2, r2, r1). The quotient is 9, and the remainder is 2.
+Multiply the quotient (9) by the divisor (3). The result is 27.
+Compare the result (27) with the original number (29). They are not equal, so continue to the next iteration.
+Third Iteration:
+
+Increment the divisor to 4.
+Compare the divisor (4) with the number (29).
+Since 4 < 29, enter the loop.
+Divide 29 by 4 (sdiv r2, r2, r1). The quotient is 7, and the remainder is 1.
+Multiply the quotient (7) by the divisor (4). The result is 28.
+Compare the result (28) with the original number (29). They are not equal, so continue to the next iteration.
+Continue the Loop:
+
+The loop continues with increments to the divisor until it exceeds the square root of 29.
+End of Loop:
+
+When the divisor exceeds the square root of 29, exit the loop.
+Prime Check:
+
+Since the loop completed without finding a divisor that evenly divides 29, it is considered prime.
+Set the Z flag to indicate that the number is prime (movs r0, r0).
+End of Program:
+
+The program ends.
