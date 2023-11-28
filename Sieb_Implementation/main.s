@@ -12,17 +12,15 @@
 ;
 ;     section .text
 .global _start
+;
+;_start:
+ ;      r0 ist mein Start register
+  ;     r1 ist mein current index
+   ;     r2 nutzt fuer Divisor method 
 
-_start:
-       r0 ist mein Start register
-       r1 ist mein current index
-        r2 nutzt fuer Divisor method 
+  ;Sieve_Loop:
 
-  Sieve_Loop:
-
-    /* 
-
-    The following block represents the Sieve of Eratosthenes algorithm:
+   ; The following block represents the Sieve of Eratosthenes algorithm:
 
     ; Check if the current index(r1) is less than 2 or 2 , then straight to end, if not true to go branch check_prime
     ; Check_prime using  Divisor, if divisor greater than or equal to number (go to branch is_prime)    
