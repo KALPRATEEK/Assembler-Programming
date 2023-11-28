@@ -91,7 +91,7 @@ until_1
 do_1                      ; if not then do the following.
 	
 if_2
-			ldrb R6,[R0,R2]   ; load the current cyte , using offset r2 in r6
+			ldrb R6,[R0,R2]   ; load the current byte , using offset r2 in r6
 			cmp R6,#0    ; compare r6 with 0
 			beq then_2   ; if equal go to then_2  ; this is when the number is prime  i.e 1 in prim array.
 			b else_2     ; if not prime ,go to else_2
