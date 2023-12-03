@@ -1,140 +1,114 @@
-
-  ;******************** (C) COPYRIGHT Prateek Kalra ********************************
+;******************** (C) COPYRIGHT Prateek Kalra ********************************
 ;* File Name          : main.s
 ;* Author             : Prateek Kalra
-;* Version            : V1.0
-;* Date               : 21-11-2023
-;* Description        : This is a main fuer Prime Sieb;					  :
-;					 
+;* Version            : beta
+;* Date               : 02.12.2023
+;* Description        : 
 ;
-; 
-;
-;
-;     section .text
-.global _start
-
-_start:
-       r0 ist mein Start register
-       r1 ist mein current index
-        r2 nutzt fuer Divisor method 
-
-  Sieve_Loop:
-
-    /* 
-
-    The following block represents the Sieve of Eratosthenes algorithm:
-
-    ; Check if the current index(r1) is less than 2 or 2 , then straight to end, if not true to go branch check_prime
-    ; Check_prime using  Divisor, if divisor greater than or equal to number (go to branch is_prime)    
-    ; If prime , perform actions like printing or storing the prime number and going back to branch Check_prime for continue checking.(zb in ein neue regiter mit LDRB speciherna auch dann in rheinfolge )
-    ; Auch das Bit toggeln dann in R0 , mit hilfe Xor
-    ; Increment the index (r1).
-    ; Move to the next number.
-    ; Check if the upper limit is reached.
-    ; Continue the loop if not.
-    ; speciher wir addresse  : und wenn as off set ist dann current adress-anfang
-    ; wir mahcen das mit siev emthode, dabei machen wir bis 32 durch wenn es prime ist dass markieren das es ist rime ist . 
-     
-
 ;*******************************************************************************
 
-;Woche 5
-
-
-
-_start:
-  ; Main program execution starts here
-
-  ; Part 1: Sieb (Sieve)
-
-
+;********************************************
+; Data section
+;********************************************
 	
-AREA MyData, DATA, align = 2
+	AREA MyData, DATA, align = 2
 		
-Prim 		FILL 1001,1,1  ; each byte represent the number and which is right now 1 for  the start , as we assume no number is prime. The offset from this address will give us the value of prime number. 
-Tausend 	DCW 1000 ; A halfword declared 000. 
+prim 	FILL 1001,1,1	; Feld von 0 bis 1000 mit 1 gefüllt (jeweils 1 Byte)
+zahl	FILL 500,0,4	; Feld Von 500 für Zahlen 
+
+; Variablen
+null	DCB	0			; null
+eins	DCB	1			; eins
+zaehler	DCB	0			; Zähler fängt bei null an
 
 ;********************************************
-; Code section, aligned on 8-byte boundery
+; Code section, aligned on 8-byte boundary
 ;********************************************
 
-	AREA |.text|, CODE, READONLY, ALIGN = 3
-		
-		
+	AREA MYCODE, CODE, READONLY, ALIGN = 2
 
 ;--------------------------------------------
 ; main subroutine
 ;--------------------------------------------
-		EXPORT main
-		EXTERN initITSboard
+	EXPORT main
+	EXTERN initITSboard
 main	PROC
-        BL initITSboard ; this branch with link (BL) instruction calls the initITSboard subroutine. The link instruction saves the return address in the link register (LR)
+    BL initITSboard
 
-	
-		
-;------- Primzahlenfeld initinazieren
+; *************Primzahlfeld*************
+    ; Primzahlenfeld initialisieren
+    ldr R0, =prim    ; R0 = Anfangsadresse prim
+    ldr R4, =0x03E8   ; R4 = 1000
 
-	LDR R0,=Prim ;loads the base address of Prim in r0
-	mov R4,0x03E8; moves value of 1000 in r4 (hexa value 1000) 
-	MOV R1,#0; copy 0 in r1
-	STRB R1,[R0]; 
-	STRB R1,[R0,#1]
-	
+    ldr R1, =null     ; R1 = 0, wird für das Überschreiben der 1 in prim benötigt
+    STRB R1, [R0]     ; setzt prim[0] auf 0, da keine Primzahl
+    STRB R1, [R0, #1] ; prim[1] auf 0
+
+    ; ************for
 for_1
-	mov R2,#2	; i = R2  storing the index value in r2
-	
+    mov R2, #2        ; i = R2
 until_1
-	mul R5,R2,R2 ;     i*i = R5 ;using r5 for mutilples of each number till it reaches 1000
-	cmp R5,R4	; i*i > 1000  checking if we already reach 1000 the upper limit.
-	bhi enddo_1    ;  If r5 is more than 1000 go to branch enddo_1
-	
-do_1                      ; if not then do the following.
-	
+    mul R5, R2, R2    ; i*i = R5
+    cmp R5, R4        ; i*i > 1000
+    bhi enddo_1       ; wenn i*i > 1000, beende Schleife
+do_1
+    ; ************if
 if_2
-			ldrb R6,[R0,R2]   ; load the current cyte , using offset r2 in r6
-			cmp R6,#0    ; compare r6 with 0
-			beq then_2   ; if equal go to then_2  ; this is when the number is prime  i.e 1 in prim array.
-			b else_2     ; if not prime ,go to else_2
-
+    ldrb R6, [R0, R2] ; R6 = prim[i], (Anfang R0, geht um i(R2)-Byte weiter)
+    cmp R6, #1        ; vergleicht mit der 1
+    beq then_2        ; wenn 1 dann springe zu then_2
+    b else_2          ; sonst zu else_2
 then_2
-
+    ; **********for
 for_3
-		mov R3, R5 ; j=R3    , the value of r3 holds the byte representing prime number.
-							
+    mov R3, R5        ; j= R3                    
 until_3
-		cmp R3, R4 ; if i*i >1000 ,quit 
-		bhi enddo_3 ; wenn j>1000 end
+    cmp R3, R4        ; vergleicht j mit 1000
+    bhi enddo_3       ; wenn j > 1000, beende Schleife
 do_3
-		strb R1, [R0,R3] ; storing 0 at the adress given by r0+r3 effictevely marking it as non prime 
+    strb R1, [R0, R3] ; setzt 0 in prim[j]
 step_3
-		add R3, R2 ; marking the mutiples of r2 to mark all of them as non prime
-		b until_3
-enddo_3 
-			
-else_2 
-enif_2  ; using for continuing after each iteration
-			
-			
+    add R3, R2        ; j += i
+    b until_3
+enddo_3
+            
+else_2
+endif_2
+            
 step_1
-	add R2, #1  ; incrementing the index 
-	b until_1 ; go to start branch again. 
+    add R2, #1        ; i++
+    b until_1
 enddo_1
 
-forever	b	forever		; nowhere to retun if main ends		
-	ENDP
-       
-	END
+; ************Primzahlen speichern***************************
+    ldr R7, =zahl     ; Speicherort für Zahlen
+    ldr R2, =null     ; Start von Zahlenwert
 
+for_4
+    mov R2, #0        ; (R2, i = 0)
+until_4
+    cmp R2, R4        ; solange (R2) i < 1000 (R4)
+    bgt enddo_4
 
+if_5
+    ldrb R6, [R0, R2] ; Prüft, ob die Zahl in prim eindeutig eine Primzahl repräsentiert
+    cmp R6, #1
+    beq then_5
+    b endif_5
+then_5
+ ; mov r9,#1  
+  ;strb R2, [R7,#1]     ; speichert die Primzahl in Zahlen
+ str R2, [R7],#1    ; Store the value of r2 in zahl Array ,into the memory location pointed by R7 
+ ;add R7, R7, r9  ; Increment R7 by 1 to move to the next position in the array
 
+endif_5
 
-  
-  ; Part 2: Abspeichern (Store)
+do_4
+    add R2, #1        ; (R2) i+1
+    b until_4
+enddo_4
 
-  ; Comment: Store the primes in resultArray based on the marked information in sieveArray
-  ; Code: StorePrimes()
-
-  ; Comment: Exit the program
-  ; Code: ExitProgram()
-
-
+; ****************************************************************
+forever b forever ; nowhere to return if main ends
+    ENDP
+    END
