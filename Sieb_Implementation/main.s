@@ -5,6 +5,36 @@
 ;* Date               : 02.12.2023
 ;* Description        : 
 ;
+<<<<<<< HEAD
+=======
+; 
+;
+;
+;     section .text
+.global _start
+;
+;_start:
+ ;      r0 ist mein Start register
+  ;     r1 ist mein current index
+   ;     r2 nutzt fuer Divisor method 
+
+  ;Sieve_Loop:
+
+   ; The following block represents the Sieve of Eratosthenes algorithm:
+
+    ; Check if the current index(r1) is less than 2 or 2 , then straight to end, if not true to go branch check_prime
+    ; Check_prime using  Divisor, if divisor greater than or equal to number (go to branch is_prime)    
+    ; If prime , perform actions like printing or storing the prime number and going back to branch Check_prime for continue checking.(zb in ein neue regiter mit LDRB speciherna auch dann in rheinfolge )
+    ; Auch das Bit toggeln dann in R0 , mit hilfe Xor
+    ; Increment the index (r1).
+    ; Move to the next number.
+    ; Check if the upper limit is reached.
+    ; Continue the loop if not.
+    ; speciher wir addresse  : und wenn as off set ist dann current adress-anfang
+    ; wir mahcen das mit siev emthode, dabei machen wir bis 32 durch wenn es prime ist dass markieren das es ist rime ist . 
+     
+
+>>>>>>> 1e40c5a032a9f407c2b3fdeab703e44677808d34
 ;*******************************************************************************
 
 ;********************************************
@@ -54,10 +84,18 @@ until_1
 do_1
     ; ************if
 if_2
+<<<<<<< HEAD
     ldrb R6, [R0, R2] ; R6 = prim[i], (Anfang R0, geht um i(R2)-Byte weiter)
     cmp R6, #1        ; vergleicht mit der 1
     beq then_2        ; wenn 1 dann springe zu then_2
     b else_2          ; sonst zu else_2
+=======
+			ldrb R6,[R0,R2]   ; load the current byte , using offset r2 in r6
+			cmp R6,#0    ; compare r6 with 0
+			beq then_2   ; if equal go to then_2  ; this is when the number is prime  i.e 1 in prim array.
+			b else_2     ; if not prime ,go to else_2
+
+>>>>>>> 1e40c5a032a9f407c2b3fdeab703e44677808d34
 then_2
     ; **********for
 for_3
